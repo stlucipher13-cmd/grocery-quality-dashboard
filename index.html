@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- 
+    Grocery Quality Manager Dashboard
+    Intended URL: https://grocery-quality-central.amazon.dev/monitoring/
+    Local Development: http://localhost:8001/dashboard.html
+-->
+<html lang="en"></html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PK Manager - Quality Manager</title>
+    <title>Grocery Quality Manager</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +25,7 @@
 
         /* Header */
         .header {
-            background: #232f3e;
+            background: #777778;
             color: white;
             padding: 0;
             border-bottom: 1px solid #37475a;
@@ -298,6 +303,110 @@
             font-size: 1rem;
         }
 
+        /* Static Histogram Styles */
+        .histogram-container {
+            height: 300px;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .histogram-title {
+            font-size: 0.9rem;
+            color: #5f6368;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .histogram {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 0 1rem;
+            border-bottom: 2px solid #d5dbdb;
+            border-left: 2px solid #d5dbdb;
+            position: relative;
+        }
+
+        .histogram-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 40px;
+            margin: 0 2px;
+        }
+
+        .bar {
+            width: 30px;
+            background: linear-gradient(to top, #0073bb, #4da6d9);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .bar:hover {
+            background: linear-gradient(to top, #005a9b, #0073bb);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #16191f;
+            font-weight: 600;
+        }
+
+        .bar-label {
+            margin-top: 8px;
+            font-size: 0.7rem;
+            color: #5f6368;
+            text-align: center;
+            transform: rotate(-45deg);
+            transform-origin: center;
+            white-space: nowrap;
+        }
+
+        .y-axis-labels {
+            position: absolute;
+            left: -30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #5f6368;
+        }
+
+        /* Different color schemes for different charts */
+        .histogram-defects .bar {
+            background: linear-gradient(to top, #1e3a8a, #3b82f6);
+        }
+
+        .histogram-defects .bar:hover {
+            background: linear-gradient(to top, #1e40af, #2563eb);
+        }
+
+        .histogram-teams .bar {
+            background: linear-gradient(to top, #1e3a8a, #3b82f6);
+        }
+
+        .histogram-teams .bar:hover {
+            background: linear-gradient(to top, #1e40af, #2563eb);
+        }
+
+        .histogram-resolution .bar {
+            background: linear-gradient(to top, #1e3a8a, #3b82f6);
+        }
+
+        .histogram-resolution .bar:hover {
+            background: linear-gradient(to top, #1e40af, #2563eb);
+        }
+
         /* Filters Section */
         .filters-bar {
             display: flex;
@@ -365,8 +474,8 @@
     <div class="header">
         <div class="header-top">
             <div class="logo-section">
-                <div class="logo">PK Manager</div>
-                <div class="breadcrumb">Quality Manager › SQG</div>
+                <div class="logo">Grocery Quality Central</div>
+                <div class="breadcrumb">Quality Manager › Monitoring</div>
             </div>
             <div class="user-section">
                 <span>Region: us-west-2</span>
@@ -379,10 +488,10 @@
         <!-- Navigation Tabs -->
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
-            <div class="nav-tab" onclick="showTab('quality-gates')">Quality Gates</div>
+            <div class="nav-tab" onclick="showTab('quality-gates')">Defect Types</div>
             <div class="nav-tab" onclick="showTab('metrics')">Metrics & KPIs</div>
             <div class="nav-tab" onclick="showTab('reports')">Reports</div>
-            <div class="nav-tab" onclick="showTab('configuration')">Configuration</div>
+            <div class="nav-tab" onclick="showTab('configuration')">Remediation</div>
             <div class="nav-tab" onclick="showTab('audit-logs')">Audit Logs</div>
         </div>
     </div>
@@ -393,36 +502,36 @@
         <div id="overview" class="tab-content active">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Software Quality Gateway Overview</h1>
-                    <p class="page-description">Monitor and manage software quality metrics across your organization</p>
+                    <h1 class="page-title">Grocery Quality Monitoring Overview</h1>
+                    <p class="page-description">Monitor and manage catalog defects across Grocery organization</p>
                 </div>
 
                 <!-- Filters -->
                 <div class="filters-bar">
                     <div class="filter-group">
-                        <label class="filter-label">Time Range</label>
+                        <label class="filter-label">Defect Ageing</label>
                         <select class="filter-select">
-                            <option>Last 7 days</option>
-                            <option>Last 30 days</option>
-                            <option>Last 90 days</option>
+                            <option>Less than 7 days</option>
+                            <option>Less than 30 days</option>
+                            <option>Greater than 30 days</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Assigned Service</label>
+                        <select class="filter-select">
+                            <option>WFM Store</option>
+                            <option>Fresh</option>
+                            <option>Grocery Partners</option>
+                            <option>GCOI</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label class="filter-label">Team</label>
                         <select class="filter-select">
-                            <option>All Teams</option>
-                            <option>Frontend Team</option>
-                            <option>Backend Team</option>
-                            <option>DevOps Team</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Service</label>
-                        <select class="filter-select">
-                            <option>All Services</option>
-                            <option>User Service</option>
-                            <option>Payment Service</option>
-                            <option>Notification Service</option>
+                            <option>GMT-Product</option>
+                            <option>GMT-Tech</option>
+                            <option>GCOI-BI</option>
+                            <option>GCOI-Operations</option>
                         </select>
                     </div>
                 </div>
@@ -430,24 +539,24 @@
                 <!-- Metrics Row -->
                 <div class="metrics-row">
                     <div class="metric-box">
-                        <div class="metric-value">94.2%</div>
+                        <div class="metric-value">89.2%</div>
                         <div class="metric-label">Quality Score</div>
                         <div class="metric-trend trend-up">↗ +2.1% vs last week</div>
                     </div>
                     <div class="metric-box">
-                        <div class="metric-value">156</div>
-                        <div class="metric-label">Active Gates</div>
-                        <div class="metric-trend trend-up">↗ +12 vs last week</div>
+                        <div class="metric-value">14 days</div>
+                        <div class="metric-label">Average Open Defects Ageing</div>
+                        <div class="metric-trend trend-up">↗ -2 days vs last week</div>
                     </div>
                     <div class="metric-box">
                         <div class="metric-value">23</div>
-                        <div class="metric-label">Failed Gates</div>
-                        <div class="metric-trend trend-down">↘ -5 vs last week</div>
+                        <div class="metric-label">Defects Exceeding 30 Days</div>
+                        <div class="metric-trend trend-down">↘ +5 vs last week</div>
                     </div>
                     <div class="metric-box">
-                        <div class="metric-value">99.1%</div>
-                        <div class="metric-label">SLA Compliance</div>
-                        <div class="metric-trend trend-up">↗ +0.3% vs last week</div>
+                        <div class="metric-value">551</div>
+                        <div class="metric-label">Total Defects</div>
+                        <div class="metric-trend trend-down">↘ +21 vs last week</div>
                     </div>
                 </div>
 
@@ -456,62 +565,107 @@
                     <!-- Quality Trends Chart -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Quality Trends</div>
+                            <div class="card-title">Defects by Category (Last 30 Days)</div>
                         </div>
                         <div class="card-content">
-                            <div class="chart-container">
-                                📈 Quality Score Trend Chart (Last 30 Days)
+                            <div class="histogram-container histogram-defects">
+                                <div class="histogram-title">Number of Open Defects by Category</div>
+                                <div class="histogram">
+                                    <div class="y-axis-labels">
+                                        <span>200</span>
+                                        <span>150</span>
+                                        <span>100</span>
+                                        <span>50</span>
+                                        <span>0</span>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 127px;">
+                                            <span class="bar-value">127</span>
+                                        </div>
+                                        <div class="bar-label">Missing Images</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 89px;">
+                                            <span class="bar-value">89</span>
+                                        </div>
+                                        <div class="bar-label">Nutrition Info</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 156px;">
+                                            <span class="bar-value">156</span>
+                                        </div>
+                                        <div class="bar-label">Inventory</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 43px;">
+                                            <span class="bar-value">43</span>
+                                        </div>
+                                        <div class="bar-label">Pricing</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 78px;">
+                                            <span class="bar-value">78</span>
+                                        </div>
+                                        <div class="bar-label">Descriptions</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 34px;">
+                                            <span class="bar-value">34</span>
+                                        </div>
+                                        <div class="bar-label">Categories</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Quality Gate Results -->
+                    <!-- Recent Defect Refresh Results -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Recent Quality Gate Results</div>
+                            <div class="card-title">Recent Defect Refresh Results</div>
                         </div>
                         <div class="card-content">
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Service</th>
-                                        <th>Gate Type</th>
+                                        <th>Product Category</th>
+                                        <th>Defect Type</th>
                                         <th>Status</th>
-                                        <th>Score</th>
-                                        <th>Last Run</th>
+                                        <th>Count</th>
+                                        <th>Last Updated</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>UserService</td>
-                                        <td>Code Coverage</td>
-                                        <td><span class="status-badge status-success">Passed</span></td>
-                                        <td>87.3%</td>
+                                        <td>Fresh Produce</td>
+                                        <td>Missing Images</td>
+                                        <td><span class="status-badge status-error">Critical</span></td>
+                                        <td>127</td>
                                         <td>2 hours ago</td>
                                         <td><a href="#" class="btn">View Details</a></td>
                                     </tr>
                                     <tr>
-                                        <td>PaymentService</td>
-                                        <td>Security Scan</td>
+                                        <td>Dairy Products</td>
+                                        <td>Incorrect Pricing</td>
                                         <td><span class="status-badge status-warning">Warning</span></td>
-                                        <td>92.1%</td>
+                                        <td>43</td>
                                         <td>4 hours ago</td>
                                         <td><a href="#" class="btn">View Details</a></td>
                                     </tr>
                                     <tr>
-                                        <td>NotificationService</td>
-                                        <td>Performance</td>
-                                        <td><span class="status-badge status-error">Failed</span></td>
-                                        <td>68.4%</td>
+                                        <td>Packaged Goods</td>
+                                        <td>Missing Nutrition Info</td>
+                                        <td><span class="status-badge status-error">Critical</span></td>
+                                        <td>89</td>
                                         <td>6 hours ago</td>
                                         <td><a href="#" class="btn">View Details</a></td>
                                     </tr>
                                     <tr>
-                                        <td>AuthService</td>
-                                        <td>Code Quality</td>
-                                        <td><span class="status-badge status-success">Passed</span></td>
-                                        <td>95.7%</td>
+                                        <td>Beverages</td>
+                                        <td>Inventory Mismatch</td>
+                                        <td><span class="status-badge status-success">Resolved</span></td>
+                                        <td>12</td>
                                         <td>8 hours ago</td>
                                         <td><a href="#" class="btn">View Details</a></td>
                                     </tr>
@@ -523,62 +677,84 @@
             </div>
         </div>
 
-        <!-- Quality Gates Tab -->
+        <!-- Defect Types Tab -->
         <div id="quality-gates" class="tab-content">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Quality Gates Management</h1>
-                    <p class="page-description">Configure and monitor quality gates for your services</p>
+                    <h1 class="page-title">Defect Types Management</h1>
+                    <p class="page-description">Monitor and categorize different types of catalog defects</p>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Active Quality Gates</div>
+                        <div class="card-title">Active Defect Categories</div>
                     </div>
                     <div class="card-content">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Gate Name</th>
-                                    <th>Type</th>
-                                    <th>Threshold</th>
-                                    <th>Services</th>
-                                    <th>Status</th>
+                                    <th>Defect Type</th>
+                                    <th>Category</th>
+                                    <th>Severity</th>
+                                    <th>Open Count</th>
+                                    <th>Avg Resolution Time</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Code Coverage Gate</td>
-                                    <td>Coverage</td>
-                                    <td>≥ 80%</td>
-                                    <td>12 services</td>
-                                    <td><span class="status-badge status-success">Active</span></td>
+                                    <td>Missing Product Images</td>
+                                    <td>Content Quality</td>
+                                    <td><span class="status-badge status-error">Critical</span></td>
+                                    <td>127</td>
+                                    <td>5.2 days</td>
                                     <td>
-                                        <a href="#" class="btn">Edit</a>
-                                        <a href="#" class="btn">Disable</a>
+                                        <a href="#" class="btn">View</a>
+                                        <a href="#" class="btn">Assign</a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Security Vulnerability Gate</td>
-                                    <td>Security</td>
-                                    <td>0 Critical</td>
-                                    <td>8 services</td>
-                                    <td><span class="status-badge status-success">Active</span></td>
+                                    <td>Incorrect Pricing</td>
+                                    <td>Pricing</td>
+                                    <td><span class="status-badge status-error">Critical</span></td>
+                                    <td>43</td>
+                                    <td>2.1 days</td>
                                     <td>
-                                        <a href="#" class="btn">Edit</a>
-                                        <a href="#" class="btn">Disable</a>
+                                        <a href="#" class="btn">View</a>
+                                        <a href="#" class="btn">Assign</a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Performance Gate</td>
-                                    <td>Performance</td>
-                                    <td>≤ 200ms P95</td>
-                                    <td>15 services</td>
-                                    <td><span class="status-badge status-warning">Warning</span></td>
+                                    <td>Missing Nutrition Information</td>
+                                    <td>Compliance</td>
+                                    <td><span class="status-badge status-warning">High</span></td>
+                                    <td>89</td>
+                                    <td>7.8 days</td>
                                     <td>
-                                        <a href="#" class="btn">Edit</a>
-                                        <a href="#" class="btn">Disable</a>
+                                        <a href="#" class="btn">View</a>
+                                        <a href="#" class="btn">Assign</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Inventory Mismatch</td>
+                                    <td>Inventory</td>
+                                    <td><span class="status-badge status-warning">Medium</span></td>
+                                    <td>156</td>
+                                    <td>3.4 days</td>
+                                    <td>
+                                        <a href="#" class="btn">View</a>
+                                        <a href="#" class="btn">Assign</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Incorrect Product Description</td>
+                                    <td>Content Quality</td>
+                                    <td><span class="status-badge status-info">Low</span></td>
+                                    <td>234</td>
+                                    <td>12.3 days</td>
+                                    <td>
+                                        <a href="#" class="btn">View</a>
+                                        <a href="#" class="btn">Assign</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -592,30 +768,152 @@
         <div id="metrics" class="tab-content">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Metrics & KPIs</h1>
-                    <p class="page-description">Detailed quality metrics and key performance indicators</p>
+                    <h1 class="page-title">Grocery Quality Metrics & KPIs</h1>
+                    <p class="page-description">Detailed catalog quality metrics and performance indicators</p>
                 </div>
 
                 <div class="content-grid">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Quality Score Distribution</div>
+                            <div class="card-title">Team Performance - Defects Resolved This Week</div>
                         </div>
                         <div class="card-content">
-                            <div class="chart-container">
-                                📊 Quality Score Distribution Chart
+                            <div class="histogram-container histogram-teams">
+                                <div class="histogram-title">Defects Resolved by Team (Current Week)</div>
+                                <div class="histogram">
+                                    <div class="y-axis-labels">
+                                        <span>40</span>
+                                        <span>30</span>
+                                        <span>20</span>
+                                        <span>10</span>
+                                        <span>0</span>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 115px;">
+                                            <span class="bar-value">23</span>
+                                        </div>
+                                        <div class="bar-label">GMT-Product</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 90px;">
+                                            <span class="bar-value">18</span>
+                                        </div>
+                                        <div class="bar-label">GMT-Tech</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 60px;">
+                                            <span class="bar-value">12</span>
+                                        </div>
+                                        <div class="bar-label">GCOI-BI</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 155px;">
+                                            <span class="bar-value">31</span>
+                                        </div>
+                                        <div class="bar-label">GCOI-Ops</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Gate Success Rate</div>
+                            <div class="card-title">Average Resolution Time by Defect Type</div>
                         </div>
                         <div class="card-content">
-                            <div class="chart-container">
-                                📈 Gate Success Rate Over Time
+                            <div class="histogram-container histogram-resolution">
+                                <div class="histogram-title">Resolution Time in Days</div>
+                                <div class="histogram">
+                                    <div class="y-axis-labels">
+                                        <span>15</span>
+                                        <span>12</span>
+                                        <span>9</span>
+                                        <span>6</span>
+                                        <span>3</span>
+                                        <span>0</span>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 69px;">
+                                            <span class="bar-value">5.2</span>
+                                        </div>
+                                        <div class="bar-label">Images</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 28px;">
+                                            <span class="bar-value">2.1</span>
+                                        </div>
+                                        <div class="bar-label">Pricing</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 104px;">
+                                            <span class="bar-value">7.8</span>
+                                        </div>
+                                        <div class="bar-label">Nutrition</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 45px;">
+                                            <span class="bar-value">3.4</span>
+                                        </div>
+                                        <div class="bar-label">Inventory</div>
+                                    </div>
+                                    <div class="histogram-bar">
+                                        <div class="bar" style="height: 164px;">
+                                            <span class="bar-value">12.3</span>
+                                        </div>
+                                        <div class="bar-label">Descriptions</div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Team Performance Metrics</div>
+                        </div>
+                        <div class="card-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Team</th>
+                                        <th>Assigned Defects</th>
+                                        <th>Resolved This Week</th>
+                                        <th>Avg Resolution Time</th>
+                                        <th>Performance Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>GMT-Product</td>
+                                        <td>156</td>
+                                        <td>23</td>
+                                        <td>4.2 days</td>
+                                        <td><span class="status-badge status-success">92%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>GMT-Tech</td>
+                                        <td>89</td>
+                                        <td>18</td>
+                                        <td>3.1 days</td>
+                                        <td><span class="status-badge status-success">95%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>GCOI-BI</td>
+                                        <td>234</td>
+                                        <td>12</td>
+                                        <td>8.7 days</td>
+                                        <td><span class="status-badge status-warning">78%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>GCOI-Operations</td>
+                                        <td>127</td>
+                                        <td>31</td>
+                                        <td>2.8 days</td>
+                                        <td><span class="status-badge status-success">97%</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -626,8 +924,8 @@
         <div id="reports" class="tab-content">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Quality Reports</h1>
-                    <p class="page-description">Generate and view quality reports</p>
+                    <h1 class="page-title">Grocery Quality Reports</h1>
+                    <p class="page-description">Generate and view catalog quality reports</p>
                 </div>
 
                 <div class="card">
@@ -647,7 +945,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Weekly Quality Summary</td>
+                                    <td>Weekly Defect Summary</td>
                                     <td>Summary</td>
                                     <td>2024-01-15 09:00</td>
                                     <td><span class="status-badge status-success">Ready</span></td>
@@ -657,7 +955,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Security Compliance Report</td>
+                                    <td>Catalog Compliance Report</td>
                                     <td>Compliance</td>
                                     <td>2024-01-14 18:30</td>
                                     <td><span class="status-badge status-success">Ready</span></td>
@@ -667,12 +965,32 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Performance Trends</td>
+                                    <td>Team Performance Analysis</td>
                                     <td>Performance</td>
                                     <td>Generating...</td>
                                     <td><span class="status-badge status-info">In Progress</span></td>
                                     <td>
                                         <a href="#" class="btn">Cancel</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Defect Aging Report</td>
+                                    <td>Aging Analysis</td>
+                                    <td>2024-01-13 14:20</td>
+                                    <td><span class="status-badge status-success">Ready</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Download</a>
+                                        <a href="#" class="btn">Schedule</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Category Quality Scorecard</td>
+                                    <td>Scorecard</td>
+                                    <td>2024-01-12 11:45</td>
+                                    <td><span class="status-badge status-warning">Needs Review</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Review</a>
+                                        <a href="#" class="btn">Download</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -682,36 +1000,97 @@
             </div>
         </div>
 
-        <!-- Configuration Tab -->
+        <!-- Remediation Tab -->
         <div id="configuration" class="tab-content">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Configuration</h1>
-                    <p class="page-description">Configure quality gates, thresholds, and notifications</p>
+                    <h1 class="page-title">Defect Remediation</h1>
+                    <p class="page-description">Configure remediation workflows and automated fixes</p>
                 </div>
 
                 <div class="content-grid">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title">Global Settings</div>
+                            <div class="card-title">Automated Remediation Rules</div>
+                        </div>
+                        <div class="card-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Defect Type</th>
+                                        <th>Auto-Fix Available</th>
+                                        <th>Success Rate</th>
+                                        <th>Last Run</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Missing Product Images</td>
+                                        <td><span class="status-badge status-success">Yes</span></td>
+                                        <td>87%</td>
+                                        <td>2 hours ago</td>
+                                        <td>
+                                            <a href="#" class="btn">Configure</a>
+                                            <a href="#" class="btn">Run Now</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inventory Mismatch</td>
+                                        <td><span class="status-badge status-success">Yes</span></td>
+                                        <td>94%</td>
+                                        <td>1 hour ago</td>
+                                        <td>
+                                            <a href="#" class="btn">Configure</a>
+                                            <a href="#" class="btn">Run Now</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Incorrect Pricing</td>
+                                        <td><span class="status-badge status-warning">Partial</span></td>
+                                        <td>62%</td>
+                                        <td>4 hours ago</td>
+                                        <td>
+                                            <a href="#" class="btn">Configure</a>
+                                            <a href="#" class="btn">Manual Review</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Missing Nutrition Info</td>
+                                        <td><span class="status-badge status-error">No</span></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>
+                                            <a href="#" class="btn">Setup</a>
+                                            <a href="#" class="btn">Manual Process</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Remediation Settings</div>
                         </div>
                         <div class="card-content">
                             <div style="display: grid; gap: 1rem;">
                                 <div>
-                                    <label class="filter-label">Default Quality Threshold</label>
-                                    <input type="number" class="filter-select" value="80" style="width: 100px;">
-                                    <span style="margin-left: 0.5rem; color: #5f6368;">%</span>
+                                    <label class="filter-label">Auto-Fix Threshold</label>
+                                    <input type="number" class="filter-select" value="85" style="width: 100px;">
+                                    <span style="margin-left: 0.5rem; color: #5f6368;">% confidence</span>
                                 </div>
                                 <div>
                                     <label class="filter-label">Notification Email</label>
-                                    <input type="email" class="filter-select" value="quality-team@amazon.com" style="width: 300px;">
+                                    <input type="email" class="filter-select" value="grocery-quality@amazon.com" style="width: 300px;">
                                 </div>
                                 <div>
-                                    <label class="filter-label">Report Frequency</label>
+                                    <label class="filter-label">Remediation Schedule</label>
                                     <select class="filter-select" style="width: 200px;">
+                                        <option>Every 2 hours</option>
+                                        <option selected>Every 4 hours</option>
                                         <option>Daily</option>
-                                        <option selected>Weekly</option>
-                                        <option>Monthly</option>
                                     </select>
                                 </div>
                                 <div style="margin-top: 1rem;">
@@ -728,8 +1107,8 @@
         <div id="audit-logs" class="tab-content">
             <div class="content-area">
                 <div class="page-header">
-                    <h1 class="page-title">Audit Logs</h1>
-                    <p class="page-description">View system activity and configuration changes</p>
+                    <h1 class="page-title">Grocery Quality Audit Logs</h1>
+                    <p class="page-description">View system activity and defect remediation history</p>
                 </div>
 
                 <div class="card">
@@ -741,7 +1120,7 @@
                             <thead>
                                 <tr>
                                     <th>Timestamp</th>
-                                    <th>User</th>
+                                    <th>User/System</th>
                                     <th>Action</th>
                                     <th>Resource</th>
                                     <th>Status</th>
@@ -751,29 +1130,43 @@
                                 <tr>
                                     <td>2024-01-15 14:30:22</td>
                                     <td>anderspa@amazon.com</td>
-                                    <td>Updated Quality Gate</td>
-                                    <td>Code Coverage Gate</td>
+                                    <td>Assigned Defect</td>
+                                    <td>Missing Images - Fresh Produce</td>
                                     <td><span class="status-badge status-success">Success</span></td>
                                 </tr>
                                 <tr>
                                     <td>2024-01-15 13:15:45</td>
-                                    <td>johndoe@amazon.com</td>
-                                    <td>Created Report</td>
-                                    <td>Weekly Quality Summary</td>
+                                    <td>Auto-Remediation System</td>
+                                    <td>Fixed Inventory Mismatch</td>
+                                    <td>Beverages Category</td>
                                     <td><span class="status-badge status-success">Success</span></td>
                                 </tr>
                                 <tr>
                                     <td>2024-01-15 12:00:10</td>
-                                    <td>system</td>
-                                    <td>Automated Scan</td>
-                                    <td>Security Gate</td>
-                                    <td><span class="status-badge status-warning">Warning</span></td>
+                                    <td>GMT-Product Team</td>
+                                    <td>Resolved Pricing Defect</td>
+                                    <td>Dairy Products</td>
+                                    <td><span class="status-badge status-success">Success</span></td>
                                 </tr>
                                 <tr>
                                     <td>2024-01-15 11:45:33</td>
-                                    <td>janesmith@amazon.com</td>
-                                    <td>Disabled Gate</td>
-                                    <td>Performance Gate</td>
+                                    <td>Quality Scanner</td>
+                                    <td>Detected New Defects</td>
+                                    <td>Packaged Goods - Nutrition Info</td>
+                                    <td><span class="status-badge status-warning">Warning</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 10:20:15</td>
+                                    <td>GCOI-Operations</td>
+                                    <td>Bulk Update</td>
+                                    <td>Product Descriptions</td>
+                                    <td><span class="status-badge status-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 09:30:42</td>
+                                    <td>johndoe@amazon.com</td>
+                                    <td>Generated Report</td>
+                                    <td>Weekly Defect Summary</td>
                                     <td><span class="status-badge status-success">Success</span></td>
                                 </tr>
                             </tbody>
