@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK Manager - Quality Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Amazon Ember", "Helvetica Neue", Roboto, Arial, sans-serif;
+            background-color: #fafafa;
+            color: #16191f;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: #232f3e;
+            color: white;
+            padding: 0;
+            border-bottom: 1px solid #37475a;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.5rem;
+            background: #131a22;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff9900;
+        }
+
+        .breadcrumb {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ff9900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #131a22;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: #232f3e;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid #37475a;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: #cccccc;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background-color: #37475a;
+            color: white;
+        }
+
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: #ff9900;
+            background-color: #37475a;
+        }
+
+        /* Main Content */
+        .main-container {
+            min-height: calc(100vh - 120px);
+        }
+
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: #16191f;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-description {
+            color: #5f6368;
+            font-size: 0.9rem;
+        }
+
+        /* Content Cards */
+        .content-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #d5dbdb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #d5dbdb;
+            background: #fafafa;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #16191f;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Metrics Section */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-box {
+            background: white;
+            border: 1px solid #d5dbdb;
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #16191f;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #5f6368;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-trend {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            color: #067f39;
+        }
+
+        .trend-down {
+            color: #d13212;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            background: #f2f3f3;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #16191f;
+            border-bottom: 2px solid #d5dbdb;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eaeded;
+        }
+
+        .data-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #067f39;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #b25000;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #d13212;
+        }
+
+        .status-info {
+            background: #cce7ff;
+            color: #0073bb;
+        }
+
+        /* Action Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d5dbdb;
+            border-radius: 4px;
+            background: white;
+            color: #16191f;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #f2f3f3;
+            border-color: #879596;
+        }
+
+        .btn-primary {
+            background: #0073bb;
+            color: white;
+            border-color: #0073bb;
+        }
+
+        .btn-primary:hover {
+            background: #005a9b;
+            border-color: #005a9b;
+        }
+
+        /* Charts Placeholder */
+        .chart-container {
+            height: 300px;
+            background: #f9f9f9;
+            border: 2px dashed #d5dbdb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5f6368;
+            font-size: 1rem;
+        }
+
+        /* Filters Section */
+        .filters-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: white;
+            border: 1px solid #d5dbdb;
+            border-radius: 8px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            color: #5f6368;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 1px solid #d5dbdb;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                overflow-x: auto;
+                padding: 0 1rem;
+            }
+
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-section">
+                <div class="logo">PK Manager</div>
+                <div class="breadcrumb">Quality Manager › SQG</div>
+            </div>
+            <div class="user-section">
+                <span>Region: us-west-2</span>
+                <span>|</span>
+                <span>anderspa@amazon.com</span>
+                <div class="user-avatar">AP</div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
+            <div class="nav-tab" onclick="showTab('quality-gates')">Quality Gates</div>
+            <div class="nav-tab" onclick="showTab('metrics')">Metrics & KPIs</div>
+            <div class="nav-tab" onclick="showTab('reports')">Reports</div>
+            <div class="nav-tab" onclick="showTab('configuration')">Configuration</div>
+            <div class="nav-tab" onclick="showTab('audit-logs')">Audit Logs</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Software Quality Gateway Overview</h1>
+                    <p class="page-description">Monitor and manage software quality metrics across your organization</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label class="filter-label">Time Range</label>
+                        <select class="filter-select">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Team</label>
+                        <select class="filter-select">
+                            <option>All Teams</option>
+                            <option>Frontend Team</option>
+                            <option>Backend Team</option>
+                            <option>DevOps Team</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Service</label>
+                        <select class="filter-select">
+                            <option>All Services</option>
+                            <option>User Service</option>
+                            <option>Payment Service</option>
+                            <option>Notification Service</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Metrics Row -->
+                <div class="metrics-row">
+                    <div class="metric-box">
+                        <div class="metric-value">94.2%</div>
+                        <div class="metric-label">Quality Score</div>
+                        <div class="metric-trend trend-up">↗ +2.1% vs last week</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">156</div>
+                        <div class="metric-label">Active Gates</div>
+                        <div class="metric-trend trend-up">↗ +12 vs last week</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">23</div>
+                        <div class="metric-label">Failed Gates</div>
+                        <div class="metric-trend trend-down">↘ -5 vs last week</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">99.1%</div>
+                        <div class="metric-label">SLA Compliance</div>
+                        <div class="metric-trend trend-up">↗ +0.3% vs last week</div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Quality Trends Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Quality Trends</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                📈 Quality Score Trend Chart (Last 30 Days)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Quality Gate Results -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Recent Quality Gate Results</div>
+                        </div>
+                        <div class="card-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Gate Type</th>
+                                        <th>Status</th>
+                                        <th>Score</th>
+                                        <th>Last Run</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>UserService</td>
+                                        <td>Code Coverage</td>
+                                        <td><span class="status-badge status-success">Passed</span></td>
+                                        <td>87.3%</td>
+                                        <td>2 hours ago</td>
+                                        <td><a href="#" class="btn">View Details</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PaymentService</td>
+                                        <td>Security Scan</td>
+                                        <td><span class="status-badge status-warning">Warning</span></td>
+                                        <td>92.1%</td>
+                                        <td>4 hours ago</td>
+                                        <td><a href="#" class="btn">View Details</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>NotificationService</td>
+                                        <td>Performance</td>
+                                        <td><span class="status-badge status-error">Failed</span></td>
+                                        <td>68.4%</td>
+                                        <td>6 hours ago</td>
+                                        <td><a href="#" class="btn">View Details</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>AuthService</td>
+                                        <td>Code Quality</td>
+                                        <td><span class="status-badge status-success">Passed</span></td>
+                                        <td>95.7%</td>
+                                        <td>8 hours ago</td>
+                                        <td><a href="#" class="btn">View Details</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quality Gates Tab -->
+        <div id="quality-gates" class="tab-content">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Quality Gates Management</h1>
+                    <p class="page-description">Configure and monitor quality gates for your services</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Active Quality Gates</div>
+                    </div>
+                    <div class="card-content">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Gate Name</th>
+                                    <th>Type</th>
+                                    <th>Threshold</th>
+                                    <th>Services</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Code Coverage Gate</td>
+                                    <td>Coverage</td>
+                                    <td>≥ 80%</td>
+                                    <td>12 services</td>
+                                    <td><span class="status-badge status-success">Active</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Edit</a>
+                                        <a href="#" class="btn">Disable</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Security Vulnerability Gate</td>
+                                    <td>Security</td>
+                                    <td>0 Critical</td>
+                                    <td>8 services</td>
+                                    <td><span class="status-badge status-success">Active</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Edit</a>
+                                        <a href="#" class="btn">Disable</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Performance Gate</td>
+                                    <td>Performance</td>
+                                    <td>≤ 200ms P95</td>
+                                    <td>15 services</td>
+                                    <td><span class="status-badge status-warning">Warning</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Edit</a>
+                                        <a href="#" class="btn">Disable</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Tab -->
+        <div id="metrics" class="tab-content">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Metrics & KPIs</h1>
+                    <p class="page-description">Detailed quality metrics and key performance indicators</p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Quality Score Distribution</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                📊 Quality Score Distribution Chart
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Gate Success Rate</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                📈 Gate Success Rate Over Time
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Quality Reports</h1>
+                    <p class="page-description">Generate and view quality reports</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Available Reports</div>
+                    </div>
+                    <div class="card-content">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Report Name</th>
+                                    <th>Type</th>
+                                    <th>Last Generated</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Weekly Quality Summary</td>
+                                    <td>Summary</td>
+                                    <td>2024-01-15 09:00</td>
+                                    <td><span class="status-badge status-success">Ready</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Download</a>
+                                        <a href="#" class="btn">Schedule</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Security Compliance Report</td>
+                                    <td>Compliance</td>
+                                    <td>2024-01-14 18:30</td>
+                                    <td><span class="status-badge status-success">Ready</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Download</a>
+                                        <a href="#" class="btn">Schedule</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Performance Trends</td>
+                                    <td>Performance</td>
+                                    <td>Generating...</td>
+                                    <td><span class="status-badge status-info">In Progress</span></td>
+                                    <td>
+                                        <a href="#" class="btn">Cancel</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Tab -->
+        <div id="configuration" class="tab-content">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Configuration</h1>
+                    <p class="page-description">Configure quality gates, thresholds, and notifications</p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Global Settings</div>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: grid; gap: 1rem;">
+                                <div>
+                                    <label class="filter-label">Default Quality Threshold</label>
+                                    <input type="number" class="filter-select" value="80" style="width: 100px;">
+                                    <span style="margin-left: 0.5rem; color: #5f6368;">%</span>
+                                </div>
+                                <div>
+                                    <label class="filter-label">Notification Email</label>
+                                    <input type="email" class="filter-select" value="quality-team@amazon.com" style="width: 300px;">
+                                </div>
+                                <div>
+                                    <label class="filter-label">Report Frequency</label>
+                                    <select class="filter-select" style="width: 200px;">
+                                        <option>Daily</option>
+                                        <option selected>Weekly</option>
+                                        <option>Monthly</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 1rem;">
+                                    <button class="btn btn-primary">Save Configuration</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Logs Tab -->
+        <div id="audit-logs" class="tab-content">
+            <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Audit Logs</h1>
+                    <p class="page-description">View system activity and configuration changes</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Recent Activity</div>
+                    </div>
+                    <div class="card-content">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Resource</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-01-15 14:30:22</td>
+                                    <td>anderspa@amazon.com</td>
+                                    <td>Updated Quality Gate</td>
+                                    <td>Code Coverage Gate</td>
+                                    <td><span class="status-badge status-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 13:15:45</td>
+                                    <td>johndoe@amazon.com</td>
+                                    <td>Created Report</td>
+                                    <td>Weekly Quality Summary</td>
+                                    <td><span class="status-badge status-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 12:00:10</td>
+                                    <td>system</td>
+                                    <td>Automated Scan</td>
+                                    <td>Security Gate</td>
+                                    <td><span class="status-badge status-warning">Warning</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-15 11:45:33</td>
+                                    <td>janesmith@amazon.com</td>
+                                    <td>Disabled Gate</td>
+                                    <td>Performance Gate</td>
+                                    <td><span class="status-badge status-success">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
